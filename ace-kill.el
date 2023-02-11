@@ -1,8 +1,8 @@
 (require 'thingatpt)
 (require 'hydra)
 
-;; For convenience, ace-kill-mode-hydra/body can be bound, e.g.,
-;; (global-set-key (kbd "s-u") 'ace-kill-mode-hydra/body)
+;; For convenience, ace-kill-hydra/body can be bound, e.g.,
+;; (global-set-key (kbd "s-u") 'ace-kill-hydra/body)
 
 (defface ak-candidate-face
   '((t (:foreground "#008b8b")))
@@ -31,6 +31,12 @@
        word-end))
   "Regexp identifying IP (v4) address.")
 
+(defvar ak-http-regexp
+  (rx (seq word-start
+           "http" (opt "s") "://" (+ (not space))
+           word-end))
+  "Regexp identifying http and https URLs.")
+
 (defun ak-ip-find ()
   "ace-kill search for IP address in visible window."
   (interactive)
@@ -40,6 +46,11 @@
   "ace-kill search for UUIDv4 in visible window."
   (interactive)
   (ak--find-candidates ak-uuid-regexp))
+
+(defun ak-http-find ()
+  "ace-kill search for http(s) URL in visible window."
+  (interactive)
+  (ak--find-candidates ak-http-regexp))
 
 (defun ak--find-candidates (regexp)
   "Search current visible window for REGEXP
@@ -84,13 +95,16 @@ vterm-copy-mode then revert after an index is selected."
                (delete-overlay (nth 2 v))) matches)
     (if vterm-copy-mode-toggled-p (vterm-copy-mode 0))))
 
-(defhydra ace-kill-mode-hydra (:color pink
-                                      :exit t
-                                      :hint nil)
+
+(defhydra ace-kill-hydra (:color pink
+                                 :exit t
+                                 :hint nil)
   "
 _u_: UUIDv4             _i_: IP Address
+_h_: HTTP(s) URL
 
 "
   ("u" ak-uuid-find)
   ("i" ak-ip-find)
+  ("h" ak-http-find)
   ("q" nil "quit" :color blue))
