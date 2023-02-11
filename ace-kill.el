@@ -37,6 +37,13 @@
            word-end))
   "Regexp identifying http and https URLs.")
 
+(defvar ak-email-regexp thing-at-point-email-regexp
+  "Regexp identifying email addresses.")
+
+(defvar ak-gcloud-access-token-regexp
+  (rx (seq word-start "ya29." (+ (any "-a-zA-Z0-9_"))))
+  "Regexp identifying Google Cloud access token.")
+
 (defun ak-ip-find ()
   "ace-kill search for IP address in visible window."
   (interactive)
@@ -51,6 +58,15 @@
   "ace-kill search for http(s) URL in visible window."
   (interactive)
   (ak--find-candidates ak-http-regexp))
+
+(defun ak-email-find ()
+  "ace-kill search for email address in visible window."
+  (interactive)
+  (ak--find-candidates ak-email-regexp))
+
+(defun ak-gcloud-access-token-find ()
+  (interactive)
+  (ak--find-candidates ak-gcloud-access-token-regexp))
 
 (defun ak--find-candidates (regexp)
   "Search current visible window for REGEXP
@@ -72,7 +88,7 @@ vterm-copy-mode then revert after an index is selected."
         (move-to-window-line 0)
         (while (re-search-forward regexp nil t)
           (let* ((start (car (match-data t)))
-                 (end (nth 1 (match-data t)))
+                 (end (cadr (match-data t)))
                  (marker-idx (pop-marker))
                  (marker-ol (make-overlay start end))
                  (marker-str
@@ -100,11 +116,14 @@ vterm-copy-mode then revert after an index is selected."
                                  :exit t
                                  :hint nil)
   "
-_u_: UUIDv4             _i_: IP Address
-_h_: HTTP(s) URL
+_u_: UUIDv4               _i_: IP Address
+_h_: HTTP(s) URL          _e_: Email Address
+_g_: GCloud Access Token
 
 "
   ("u" ak-uuid-find)
   ("i" ak-ip-find)
   ("h" ak-http-find)
+  ("e" ak-email-find)
+  ("g" ak-gcloud-access-token-find)
   ("q" nil "quit" :color blue))
