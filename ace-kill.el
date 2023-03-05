@@ -44,6 +44,12 @@
   (rx (seq word-start "ya29." (+ (any "-a-zA-Z0-9_"))))
   "Regexp identifying Google Cloud access token.")
 
+(defvar ak-google-oauth-token-regexp
+  (rx (seq word-start
+       (or (seq (= 3 (any "A-Z")) "-" (= 3 (any "A-Z")) "-" (= 3 (any "A-Z")))
+           (seq (= 4 (any "A-Z")) "-" (= 4 (any "A-Z")))) word-end))
+  "Regexp identifying Google device token.")
+
 (defun ak-ip-find ()
   "ace-kill search for IP address in visible window."
   (interactive)
@@ -67,6 +73,10 @@
 (defun ak-gcloud-access-token-find ()
   (interactive)
   (ak--find-candidates ak-gcloud-access-token-regexp))
+
+(defun ak-google-oauth-token-find ()
+  (interactive)
+  (ak--find-candidates ak-google-oauth-token-regexp))
 
 (defun ak--find-candidates (regexp)
   "Search current visible window for REGEXP
@@ -118,7 +128,7 @@ vterm-copy-mode then revert after an index is selected."
   "
 _u_: UUIDv4               _i_: IP Address
 _h_: HTTP(s) URL          _e_: Email Address
-_g_: GCloud Access Token
+_g_: GCloud Access Token  _p_: Google OAuth Token
 
 "
   ("u" ak-uuid-find)
@@ -126,4 +136,7 @@ _g_: GCloud Access Token
   ("h" ak-http-find)
   ("e" ak-email-find)
   ("g" ak-gcloud-access-token-find)
+  ("p" ak-google-oauth-token-find)
   ("q" nil "quit" :color blue))
+
+(provide 'ace-kill)
