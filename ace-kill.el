@@ -94,7 +94,7 @@
   (interactive)
   (ak--find-candidates ak-google-oauth-token-regexp))
 
-(defun ak-ip4g-rccg-name-rind ()
+(defun ak-ip4g-rccg-name-find ()
   (interactive)
   (ak--find-candidates ak-ip4g-rccg-name))
 
