@@ -50,6 +50,22 @@
            (seq (= 4 (any "A-Z")) "-" (= 4 (any "A-Z")))) word-end))
   "Regexp identifying Google device token.")
 
+;; rccg-e28d-d1a39
+(defvar ak-ip4g-rccg-name
+  (rx (seq word-start "rccg-"
+           (= 4 (any hex)) "-" (= 5 (any hex)))))
+
+;; auxVolumeName: aux_volume-km-acc-3-3110221c-d2f784886785
+(defvar ak-ip4g-aux-name
+  (rx (seq word-start "aux_volume-"
+           (+? (any ascii))
+           "-" (= 8 (any hex))
+           "-" (= 12 (any hex)))))
+
+(defun ak-ip4g-aux-name-find ()
+  (interactive)
+  (ak--find-candidates ak-ip4g-aux-name))
+
 (defun ak-ip-find ()
   "ace-kill search for IP address in visible window."
   (interactive)
@@ -77,6 +93,10 @@
 (defun ak-google-oauth-token-find ()
   (interactive)
   (ak--find-candidates ak-google-oauth-token-regexp))
+
+(defun ak-ip4g-rccg-name-rind ()
+  (interactive)
+  (ak--find-candidates ak-ip4g-rccg-name))
 
 (defun ak--find-candidates (regexp)
   "Search current visible window for REGEXP
@@ -129,8 +149,11 @@ vterm-copy-mode then revert after an index is selected."
 _u_: UUIDv4               _i_: IP Address
 _h_: HTTP(s) URL          _e_: Email Address
 _g_: GCloud Access Token  _p_: Google OAuth Token
+_r_: IP4G RCCG Name       _a_: IP4G Aux Vol Name
 
 "
+  ("r" ak-ip4g-rccg-name-find)
+  ("a" ak-ip4g-aux-name-find)
   ("u" ak-uuid-find)
   ("i" ak-ip-find)
   ("h" ak-http-find)
